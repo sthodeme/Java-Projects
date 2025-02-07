@@ -1,0 +1,22 @@
+Aufgabe 01
+==========
+
+In einem neuen Projekt wirst Du den Caeser Chiffre zu neuem Leben erwecken.
+Das Fenster soll zwei JTextfield besitzen um kodierten und unkodierten Text aufzunehmen.
+Zusätzlich einen JTextField oder JSpinner um den Schlüssel einzugeben.
+Zwei JButton's sollen die Befehle zum Kodieren oder Dekodieren generieren.
+
+Aufgabe 02
+==========
+In einem neuen Projekt erstellt Du ein Hauptfenster Mit einem JLabel welches mit einem einfachen Text
+initialsiert wird.
+Da runter legst Du bitte drei JList an. 
+- Eine mit Farben (Rot, Grün Blau etc)
+- Eine mit Größenangabe (16,18 20 etc.)
+- Eine mit ein paar Zeichensätzen
+
+Jede änderunge an den JList soll das entsprechende Attribut im JLabel ändern.
+Findet raus wie man ein Fenster neuzeichnet und ob/wann es nötig ist.
+
+
+
