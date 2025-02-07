@@ -1,0 +1,38 @@
+Aufgabe 01
+==========
+
+Erstelle ein neues Projekt "Gruss". Im Projekt bitte ein Hauptfenster ohne LayoutManager erzeugen.
+Auf dem Hauptfenster sollen  ein JLabel, ein JTextField und einen JButton zu sehen sein.
+
+Das JLabel soll den Text "Name" anzeigen. In das JTextField soll dann vom
+Nutzer ein Name eingetragen werden.
+
+Beim Druck auf den JButton, der mit dem Text "Begrüßung" beschrieben ist soll
+in der Konsole "Hallo <name>, wie geht es Dir?" ausgegeben werden. Alternative kann auch
+"showMessageDialog" aus dem JOptionPane-Modul genutzt werden.
+
+Aufgabe 02
+==========
+Erstelle ein neues Projekt "Währungsrechner". Es Im Projekt bitte ein Hauptfenster ohne LayoutManager erzeugen.
+Es sollen in der gleichen Reihenfolge folgende Komponenten in das mainWindow eingefügt werden.
+
+1. JLabel "Betrag in Euro"
+2. JTextField (Editierbar)
+3. JLabel "Betrag in <Währung>
+4. JTextField (Nicht editierbar)
+5. JButton "Umrechnen in Dollar"
+6. JButton "Umrechnen in Bath"
+
+Nach der Eingabe eines Betrages im oberen Feld soll nach dem Druck auf eine
+der beiden JButton der Betrag in die entsprechende Währung umgerechnet werden.
+Dieser Wert soll dann in das untere der beiden JTextField eingetragen werden.
+Zusätzlich soll der Text des zweiten JLabel aktualisiert werden, so das die
+richtige Währung als Text erscheint.
+
+Wurde kein Betrag im oberen Feld eingegeben, soll ein Hinweisdialog erscheinen
+der darauf hinweist.
+
+Tipp: Der primitive Datentyp 'double' hat eine Wrapperklasse 'Double'. 
+ 
+
+
