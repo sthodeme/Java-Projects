@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="Caesar_Cipher/src"/>
+	<classpathentry kind="src" path="Currency_Calculator/src"/>
+	<classpathentry kind="src" path="Gruss/src"/>
+	<classpathentry kind="src" path="JFrame01/src"/>
+	<classpathentry kind="src" path="MyJLists/src"/>
+	<classpathentry kind="output" path="JFrame01/out/production/JFrame01"/>
+</classpath>
