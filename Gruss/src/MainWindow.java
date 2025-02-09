@@ -13,11 +13,11 @@ public class MainWindow extends JFrame{
     private static final long serialVersionUID = 1L;
 
     //constructor
-    public void MainWindow() {
+    public MainWindow() {
         
         //JFrame
         this.setTitle("Grusstabelle");
-        this.setSize(20, 300);
+        this.setSize(200, 300);
         this.setLayout(null);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);
@@ -31,13 +31,13 @@ public class MainWindow extends JFrame{
         //JTesxtField
 
         JTextField name = new JTextField();
-        name.setBounds(10, 35, 200, 15);
+        name.setBounds(10, 35, 100, 15);
         name.setEditable(true);
         this.add(name);
 
         //JButton
         JButton nameButton = new JButton("Gruss");
-        nameButton.setBounds(10, 60, 25, 15);
+        nameButton.setBounds(10, 60, 45, 15);
         this.add(nameButton);
 
         //ActionListener
@@ -46,14 +46,17 @@ public class MainWindow extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == nameButton) {
-                //String copyName = name.getText();
-                System.out.println("Hallo " + name);
+                String copyName = name.getText();
+                System.out.println("Hallo " + copyName);
+                //initiate a popup dialog box/window and display the message
                 JOptionPane grussPane = new JOptionPane();
-                grussPane.showMessageDialog(null, "Hallo " + name, "Gruss", JOptionPane.INFORMATION_MESSAGE);
+                grussPane.showMessageDialog(null, "Hallo " + copyName, "Gruss Fenster", JOptionPane.PLAIN_MESSAGE);
 
                 }
             }
         };
+
+        nameButton.addActionListener(takeName);
 
         
 
