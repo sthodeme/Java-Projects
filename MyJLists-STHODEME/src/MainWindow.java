@@ -103,7 +103,8 @@ public class MainWindow extends JFrame{
                 if (!e.getValueIsAdjusting()){
                     float fontSize = textSizeList.getSelectedValue();
                     Font jLebelTextFont = jlabel1.getFont();
-                    Font jLebelTextNewFont = jLebelTextFont.deriveFont(fontSize);
+                    //create a new font based on the current font, but with a different 'fontSize' size.
+                    Font jLebelTextNewFont = jLebelTextFont.deriveFont(fontSize);   
                     jlabel1.setFont(jLebelTextNewFont);
                 }
             }
