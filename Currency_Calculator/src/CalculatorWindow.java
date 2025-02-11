@@ -14,6 +14,7 @@ public class CalculatorWindow extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(300, 300);
         setLocationRelativeTo(null);
+        setLayout(null);
 
         //Jlabel
         JLabel label01 = new JLabel("Betrag in Euro:");
@@ -46,8 +47,13 @@ public class CalculatorWindow extends JFrame {
 
         //JButton 'to Baht' conversion
         JButton convertToBahtButton = new JButton("to Baht");
-        convertToBahtButton.setBounds(110, 65, 100, 20);
+        convertToBahtButton.setBounds(120, 65, 100, 20);
         this.add(convertToBahtButton);
+        
+      //JButton 'Clear all' conversion
+        JButton clearAllButton = new JButton("Clear all");
+        clearAllButton.setBounds(60, 95, 100, 20);
+        this.add(clearAllButton);
 
         ActionListener multipleActions = new ActionListener(){
             @Override
@@ -64,12 +70,17 @@ public class CalculatorWindow extends JFrame {
                     label02.setText("Betrag in Baht:");
                     outputTextField.setText(String.valueOf(baht));
                 }
+                if (e.getSource() == clearAllButton) {
+                	inputTextField.setText("");
+                	outputTextField.setText("");
+                }
                 
             }
         };
         
         convertToDollarButton.addActionListener(multipleActions);
         convertToBahtButton.addActionListener(multipleActions);
+        clearAllButton.addActionListener(multipleActions);
 
         setVisible(true);
     }
