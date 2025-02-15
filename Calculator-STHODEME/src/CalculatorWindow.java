@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Stack;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,15 +31,16 @@ public class CalculatorWindow extends JFrame {
         */
         
         //Jlabel to show first number while the second number is being entered
-        JLabel firstNumberLabel = new JLabel("xxx");
-        firstNumberLabel.setBounds(70, 5, 100, 20);
-        firstNumberLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        this.add(firstNumberLabel);
+        JLabel stackDisplay = new JLabel("");
+        stackDisplay.setBounds(70, 5, 100, 20);
+        stackDisplay.setHorizontalAlignment(SwingConstants.RIGHT);
+        this.add(stackDisplay);
 
         //Jlabel to show the mathematical operator being used
-        JLabel operatorLabel = new JLabel("+");
+        JLabel operatorLabel = new JLabel("");
         operatorLabel.setBounds(180, 5, 30, 20);
         this.add(operatorLabel);
+
 
         //Jlabel to show the (first & ) second number being entered
         JLabel label01 = new JLabel("Input:");
@@ -109,9 +111,10 @@ public class CalculatorWindow extends JFrame {
 
         // Function Buttons
          //JButton "."
+         /* 
          JButton pointButton = new JButton(".");
          pointButton.setBounds(115, 195, xWidth, yHeight);
-
+        */
         //JButton '+' operation
         JButton addButton = new JButton("+");
         addButton.setBounds(5, 255, xWidth, yHeight);
@@ -142,78 +145,25 @@ public class CalculatorWindow extends JFrame {
 
         // An Array of Function Buttons
         JButton[] functionButtons = new JButton[8];
-        functionButtons[0] = pointButton;
-        functionButtons[1] = addButton;
-        functionButtons[2] = subButton;
-        functionButtons[3] = mulButton;
-        functionButtons[4] = divButton;
-        functionButtons[5] = equalsToButton;
-        functionButtons[6] = deleteButton;
-        functionButtons[7] = clearButton;
+        //functionButtons[0] = pointButton;
+        functionButtons[0] = addButton;
+        functionButtons[1] = subButton;
+        functionButtons[2] = mulButton;
+        functionButtons[3] = divButton;
+        functionButtons[4] = equalsToButton;
+        functionButtons[5] = deleteButton;
+        functionButtons[6] = clearButton;
         // Add all function buttons to the frame
-        for (int i = 0; i < 8; i++){
+        for (int i = 0; i < 7; i++){
             this.add(functionButtons[i]);
         }
 
+        //Stack to store the input values & operator
+        Stack<String> inputStack = new Stack<>();
 
-        for (int i = 0; i < 8; i++){
-            functionButtons[i].addActionListener(new ActionListener(){
-                @Override
-                public void actionPerformed(ActionEvent e){
-                    if (e.getSource() == pointButton){
-                        inputTextField.setText(inputTextField.getText() + ".");
-                    }
-                    if (e.getSource() == addButton){
-                        inputTextField.setText(inputTextField.getText() + "+");
-                    }
-                    if (e.getSource() == subButton){
-                        inputTextField.setText(inputTextField.getText() + "-");
-                        //subButton.setEnabled(false);
-                    }
-                    if (e.getSource() == mulButton){
-                        inputTextField.setText(inputTextField.getText() + "*");
-                    }
-                    if (e.getSource() == divButton){
-                        inputTextField.setText(inputTextField.getText() + "/");
-                    }
-
-                    if (e.getSource() == equalsToButton){
-                        double result = 0;
-                        String input = inputTextField.getText();
-                        String[] numbers = input.split("[+\\-*/]");
-                        result = Double.parseDouble(numbers[0]);
-                        //double num1 = Double.parseDouble(numbers[0]);
-                        double num2 = Double.parseDouble(numbers[1]);
-                        
-                        if (input.contains("+")){
-                            result = result + num2;
-                        }
-                        if (input.contains("-")){
-                            result = result - num2;
-                        }
-                        if (input.contains("*")){
-                            result = result * num2;
-                        }
-                        if (input.contains("/")){
-                            result = result / num2;
-                        }
-                        outputTextField.setText(String.valueOf(result));
-                    }
-                    if (e.getSource() == deleteButton){
-                        String text = inputTextField.getText();
-                        inputTextField.setText(text.substring(0, text.length() - 1));
-                    }
-                    if (e.getSource() == clearButton){
-                        inputTextField.setText("");
-                        outputTextField.setText("");
-                    }
-                }
-            });
-        }
-
-        // Add action listener to all number buttons
-        for (int i = 0; i < 11; i++){
-            numberButtons[i].addActionListener(new ActionListener(){
+         // Add action listener to all number buttons
+         for (int j = 0; j < 11; j++){
+            numberButtons[j].addActionListener(new ActionListener(){
                 @Override
                 public void actionPerformed(ActionEvent e){
                     JButton button = (JButton) e.getSource();
@@ -221,6 +171,75 @@ public class CalculatorWindow extends JFrame {
                 }
             });
         }
+ 
+        // Add action listener to all function buttons
+        for (int i = 0; i < 7; i++){
+            functionButtons[i].addActionListener(new ActionListener(){
+
+                @Override
+                public void actionPerformed(ActionEvent e){
+                    //inputStack.push(inputTextField.getText());
+                    //stackDisplay.setText(inputStack.peek());
+
+                    //clear all fields, when 'Clr' button is clicked
+                    if (e.getSource() == clearButton){
+                        inputTextField.setText("");
+                        outputTextField.setText("");
+                        stackDisplay.setText("");
+                        inputStack.clear();
+                    }
+
+                    //delete the last character, when 'Del' button is clicked
+                    if (e.getSource() == deleteButton){
+                        String text = inputTextField.getText();
+                        inputTextField.setText(text.substring(0, text.length() - 1));
+                    }
+                    operatorLabel.setText(e.getActionCommand());
+
+                    if(inputStack.isEmpty()){ 
+                        inputStack.push(inputTextField.getText());
+                        stackDisplay.setText(inputStack.peek());
+                        if(!"=".equals(e.getActionCommand())){
+                            inputStack.push(e.getActionCommand());
+                        }
+                        inputTextField.setText("0");
+                        stackDisplay.setText(inputStack.peek());
+                        System.out.println(inputStack);
+                        return;
+                    }
+                    if(inputStack.size() == 1){
+                        if(!"=".equals(e.getActionCommand())){
+                            inputStack.push(e.getActionCommand());
+                        }
+                        inputTextField.setText("0");
+                        stackDisplay.setText(inputStack.peek());
+                        System.out.println(inputStack);
+                        return;
+                    }
+                       
+               
+                    if (inputStack.size() == 2) {
+                        String toOperate = inputStack.pop();
+                        double valueA = Double.parseDouble(inputStack.pop());
+                        double valueB = Double.parseDouble(inputTextField.getText());
+                        System.out.println(valueA + " " + toOperate + " " + valueB);
+                        System.out.println("i am here");
+                        String result = "0";
+                        switch (toOperate) {
+                            case "+" -> result = Double.toString(valueA + valueB);
+                            case "-" -> result = Double.toString(valueA - valueB);
+                            case "*" -> result = Double.toString(valueA * valueB);
+                            case "/" -> result = Double.toString(valueA / valueB);
+                        }
+                        inputTextField.setText(String.valueOf(result));
+                        stackDisplay.setText(String.valueOf(result));
+                        outputTextField.setText(String.valueOf(result));
+                    //}
+                }
+            }
+        });
+
+       
 
         // Add action listener to the negative button
         negButton.addActionListener(new ActionListener(){
@@ -240,20 +259,8 @@ public class CalculatorWindow extends JFrame {
                 outputTextField.setText("");
             }
         });
-        /* 
-        // Add action listener to the delete button
-        deleteButton.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                String text = inputTextField.getText();
-                inputTextField.setText(text.substring(0, text.length() - 1));
-            }
-        });
-        */
 
-
-        
-        
         setVisible(true);
+        }
     }
 }
