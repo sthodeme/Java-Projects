@@ -16,6 +16,8 @@ public class CalcWindow extends JFrame{
 
     JLabel display;
     public JLabel stackDisplay;
+    public JLabel msDisplay;
+    public JLabel operatorDisplay;
     public boolean changeSign = false;
 
     public CalcWindow() {
@@ -41,12 +43,29 @@ public class CalcWindow extends JFrame{
         final int xStart = 25;
         final int yStart = 115;
 
+        //MS display
+        this.msDisplay = new JLabel("");
+        this.msDisplay.setBounds(xStart,20,100,40);
+        this.msDisplay.setForeground(Color.WHITE);
+        this.msDisplay.setHorizontalAlignment(SwingConstants.LEFT);
+        this.add(this.msDisplay);
+
         // Stack Display
-        this.stackDisplay = new JLabel("xx");
-        this.stackDisplay.setBounds(xStart,20,300,40);
+        this.stackDisplay = new JLabel("");
+        this.stackDisplay.setBounds(135,20,160,40);
         this.stackDisplay.setForeground(Color.WHITE);
         this.stackDisplay.setHorizontalAlignment(SwingConstants.RIGHT);
         this.add(this.stackDisplay);
+
+        //operatorDisplay
+        this.operatorDisplay = new JLabel("");
+        this.operatorDisplay.setBounds(300,20,50,40);
+        this.operatorDisplay.setForeground(Color.WHITE);
+        this.operatorDisplay.setHorizontalAlignment(SwingConstants.LEFT);
+        this.add(this.operatorDisplay);
+
+
+
 
         //Input Area
         this.display = new JLabel("0");
@@ -59,23 +78,24 @@ public class CalcWindow extends JFrame{
         this.add(this.display);
 
         // Tastenfeld aufbauen
-        // Listener holen
+        // Get Listener
         ActionListener dl = calcEngine.getDigitListener();
         ActionListener ol = calcEngine.getOperatorListener();
+        //ActionListener all = calcEngine.getAllListener();
 
 
 
-        // Tastenfeld
+        // ButtonLayout
         String[][] tasten = {
                 {"M+","M-","MS","MR","MC"},
-                {"X2","1/X","%","XR","/"},
+                {"X²","1/X","%","√X","/"},
                 {"1","2","3","4","*"},
                 {"5","6","7", "8","-"},
                 {"9","0",".","+/-","+"},
-                {"C","Del","=","#","#"}
+                {"C","Del","=","",""}
         };
 
-        // Tastenmatrix aufbauen
+        // building Button Layout
         for (int row = 0, x = xStart; row < 5; row++, x += buttonOffset) {
             for (int col = 0,y = yStart; col < 6; col++, y += buttonOffset) {
                 String taste = tasten[col][row];
@@ -83,6 +103,8 @@ public class CalcWindow extends JFrame{
                 actButton.setActionCommand(taste);
                 actButton.setBounds(x,y,buttonSize,buttonSize);
                 actButton.setFont(digitsFont);
+
+                //actButton.addActionListener(all);
 
                 if ("0123456789.".contains(taste)) {
                     actButton.addActionListener(dl);//calcEngine.getDigitListener());
@@ -93,15 +115,12 @@ public class CalcWindow extends JFrame{
                     //actButton.setBackground(Color.ORANGE);
 
                 }
+
+
                 actButton.setOpaque(true);
                 this.add(actButton);
 
             }
-            /*
-            if("+/-" == e.getActio{
-                changeSign = true;
-            }
-            */
 
         }
 
