@@ -1,10 +1,6 @@
-import org.w3c.dom.ls.LSOutput;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import java.util.Stack;
-
 import javax.swing.JLabel;
 
 /**
@@ -14,19 +10,22 @@ import javax.swing.JLabel;
 public class CalcEngine {
     // ActionListener für die Zifferntasten '0-9', '.' ( & 'Del' )
     private ActionListener digitListener;
-
+    
     // ActionListener für die Operatoren "+", "-", "*", "/", "C" und "="
     private ActionListener operatorListener;
 
+    private ActionListener allListener;
+
     // Zwischenspeicherung des Wertes im Display nach Druck auf eine der Operatorentasten.
-    private Stack<String> inputStack = new Stack<>();
+    private Stack<String> inputNumberStack = new Stack<>();
+    private Stack<String> operatorStack = new Stack<>();
+    boolean clearDisplay = false;
 
     double firstNumber;
     double secondNumber;
 
     String memoryPlus;
 
-    private ActionListener actionListener;
 
     /**
      * Konstruktion der Engine mit einer Referenz auf das Hauptfenster. Über diese Referenz
@@ -37,11 +36,13 @@ public class CalcEngine {
      */
     public CalcEngine(CalcWindow calcWindow) {
         // Weitere Ziffern werden im Display hinten angehängt.
-        digitListener = new ActionListener() {
+        allListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JLabel display = calcWindow.getDisplayField();
                 String buttonInput = e.getActionCommand().toString();
+                String operator = e.getActionCommand();
+                double result = 0;
                 switch (buttonInput) {
                     //capturing digits
                     case ".":
@@ -59,211 +60,151 @@ public class CalcEngine {
                     case "7":
                     case "8":
                     case "9":
+                        if (clearDisplay) {
+                            display.setText("");
+                            clearDisplay = false;
+                        }
                         display.setText(display.getText() + buttonInput);
                         break;
+                    case "+":
+                    case "-":
+                    case "*":
+                    case "/":
+                        operatorStack.push(e.getActionCommand());
+                        firstNumber = Double.parseDouble(display.getText());
+                        calcWindow.stackDisplay.setText(display.getText());
+                        calcWindow.operatorDisplay.setText(operatorStack.peek());
+                        inputNumberStack.push(display.getText());
+                        operator = buttonInput;
+                        clearDisplay = true;
+                        /* 
+                        calcWindow.stackDisplay.setText(display.getText());
+                        calcWindow.operatorDisplay.setText(operatorStack.peek());
+                        inputNumberStack.push(display.getText());
+                        display.setText("0");
+                        //System.out.println("I am in '+' with inputNumberStack size: " + inputNumberStack.size());
+                        */
+                        break;
+                    case "AC":
+                        display.setText("0");
+                        inputNumberStack.clear();
+                        operatorStack.clear();
+                        System.out.println("inputNumberStack print loc-clear: " + inputNumberStack);
+                        calcWindow.stackDisplay.setText("");
+                        calcWindow.msTextDisplay.setText("");
+                        calcWindow.msValueDisplay.setText("");
+                        calcWindow.operatorDisplay.setText("");
+                        break;
+                    case "Del":
+                        String text = display.getText();
+                        if (text.length() == 1) {
+                            display.setText("0");
+                        }else {
+                            display.setText(text.substring(0, text.length() - 1));
+                        }
+                        break;
+                    case "+/-":
+                        double temp = Double.parseDouble(display.getText());
+                        display.setText(String.valueOf(temp * (-1)));
+                        //operatorStack.pop();
+                        break;
+                        case "1/X":
+                        result = 1 / Double.parseDouble(display.getText());
+                        display.setText(Double.toString(result));
+                        break;
+                    case "X²":
+                        double value = Double.valueOf(display.getText());
+                        result = value * value;
+                        System.out.println("result: " + result);
+                        display.setText(Double.toString(result));
+                        break;
+                    case "√X":
+                        result = Math.sqrt(Double.valueOf(display.getText()));
+                        display.setText(Double.toString(result));
+                        break;
+                    case "%":
+                        result = Double.valueOf(display.getText()) / 100;
+                        display.setText(Double.toString(result));
+                        break;
+                    case "MS":
+                        calcWindow.msTextDisplay.setText("MS: ");
+                        memoryPlus = display.getText();
+                        calcWindow.msValueDisplay.setText(memoryPlus);
+                        //operatorStack.pop();
+                        //memory = Double.parseDouble(display.getText());
+                        break;
+                    case "MR":
+                        if (!memoryPlus.isEmpty()) {
+                            display.setText(memoryPlus);
+                            operatorStack.pop();
+                            clearDisplay = true; 
+                        }
+                        //display.setText(String.valueOf(memory));
+                        // Clear after recalling
+                        break;
+                    case "M+":
+                        double tempValue = Double.parseDouble(memoryPlus) + Double.parseDouble(display.getText());
+                        display.setText(String.valueOf(tempValue));
+                        //operatorStack.pop();
+                        break;
+                    case "M-":
+                        tempValue = Double.parseDouble(memoryPlus) - Double.parseDouble(display.getText());
+                        display.setText(String.valueOf(tempValue));
+                        //operatorStack.pop();
+                        break;
+                    case "MC":
+                        //memoryPlus = "";
+                        calcWindow.msTextDisplay.setText("");
+                        calcWindow.msValueDisplay.setText("");
+                        //operatorStack.pop();
+                        break;
+        
+                    case "=":
+                        //firstNumber = Double.parseDouble(inputNumberStack.pop());
+                        //secondNumber = Double.parseDouble(display.getText());
+                        secondNumber = Double.parseDouble(display.getText());
+                        result = calculate(firstNumber, secondNumber, operator);
+                        display.setText(String.valueOf(result));
+                        calcWindow.stackDisplay.setText(display.getText());
+                        inputNumberStack.empty();
+                        firstNumber = 0;
+                        operator = "";
+                        clearDisplay = true;
+                        break;
+                    
                     default:
                 }
             }
         };
-
-        // Operatoren behandeln.
-        operatorListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JLabel display = calcWindow.getDisplayField();
-                String buttonInput = e.getActionCommand().toString();
-                String operator = e.getActionCommand();
-
-                // Operatortaste "C" - Display und inputStack löschen und Listener verlassen.
-                if ("C".equals(buttonInput)) {
-                    display.setText("");
-                    inputStack.clear();
-                    System.out.println("inputStack print loc-clear: " + inputStack);
-                    calcWindow.stackDisplay.setText("");
-                    calcWindow.msDisplay.setText("");
-                    calcWindow.operatorDisplay.setText("");
-                    return;
-                }
-
-                if ("Del".equals(buttonInput)){
-                    String text = display.getText();
-                    display.setText(text.substring(0, text.length() - 1));
-                }
-                if("+/-".equals(buttonInput)) {
-                    double temp = Double.parseDouble(display.getText());
-                    display.setText(String.valueOf(temp * (-1)));
-                }
-
-                // Was beim Druck auf die Operatorentasten geschieht hängt vom Zustand des inputBuffer ab.
-                // Buffergröße 0, Display Inhalt auf den Stack legen. Außer bei "=" den Operator ebenfalls auf den Stack.
-                System.out.println("Stack size: " + inputStack.size());
-                //display.setText(inputStack.peek());
-                double result = 0;
-                System.out.println("operator: " + e.getActionCommand());
-                if (!"=".equals(buttonInput)) {
-                    //firstNumber = Double.parseDouble(display.getText().toString());
-                    // firstNumber, if entered any, added to inputStack
-                    if (!display.getText().isEmpty()) {
-                        switch (buttonInput) {
-                            case "1/X":
-                                result = 1 / Double.parseDouble(display.getText());
-                                display.setText(Double.toString(result));
-                                break;
-                            case "X²":
-                                double value = Double.valueOf(display.getText());
-                                result = value * value;
-                                display.setText(Double.toString(result));
-                                break;
-                            case "√X":
-                                result = Math.sqrt(Double.valueOf(display.getText()));
-                                calcWindow.getDisplayField().setText(Double.toString(result));
-                                break;
-                            case "%":
-                                result = Double.valueOf(display.getText()) / 100;
-                                calcWindow.getDisplayField().setText(Double.toString(result));
-                                break;
-                            case "MS":
-                                memoryPlus = "MS: " + display.getText();
-                                calcWindow.msDisplay.setText(memoryPlus);
-                                break;
-                            case "MR":
-                                if(!memoryPlus.isEmpty()) {
-                                    display.setText(memoryPlus);
-                                }
-                                break;
-                            case "M+":
-                                double tempValue = Double.parseDouble(memoryPlus) + Double.parseDouble(display.getText());
-                                display.setText(String.valueOf(tempValue));
-                                break;
-                            case "M-":
-                                tempValue = Double.parseDouble(memoryPlus) - Double.parseDouble(display.getText());
-                                display.setText(String.valueOf(tempValue));
-                                break;
-                            case "MC":
-                                memoryPlus = "";
-                                calcWindow.msDisplay.setText((memoryPlus));
-                                break;
-
-                            case "+":
-                                calcWindow.operatorDisplay.setText(operator);
-                                if (inputStack.size() == 0) {
-                                    inputStack.push(display.getText());
-                                    display.setText("0");
-                                    calcWindow.stackDisplay.setText(inputStack.peek());
-                                }
-                                if (inputStack.size() == 1) {
-                                    firstNumber = Double.parseDouble(inputStack.pop());
-                                    secondNumber = Double.parseDouble(display.getText());
-                                    result = firstNumber + secondNumber;
-                                    display.setText("0");
-                                    calcWindow.stackDisplay.setText(String.valueOf(result));
-                                    inputStack.push(String.valueOf(result));
-                                }
-                                break;
-                            case "-":
-                                calcWindow.operatorDisplay.setText(operator);
-                                if (inputStack.size() == 0) {
-                                    inputStack.push(display.getText());
-                                    display.setText("0");
-                                    calcWindow.stackDisplay.setText(inputStack.peek());
-                                }
-                                if (inputStack.size() == 1) {
-                                    firstNumber = Double.parseDouble(inputStack.pop());
-                                    secondNumber = Double.parseDouble(display.getText());
-                                    result = firstNumber - secondNumber;
-                                    display.setText("0");
-                                    calcWindow.stackDisplay.setText(String.valueOf(result));
-                                    inputStack.push(String.valueOf(result));
-
-                                }
-                                break;
-                            case "*":
-                                calcWindow.operatorDisplay.setText(operator);
-                                if (inputStack.size() == 0) {
-                                    inputStack.push(display.getText());
-                                    display.setText("0");
-                                    calcWindow.stackDisplay.setText(inputStack.peek());
-                                }
-                                if (inputStack.size() == 1) {
-                                    firstNumber = Double.parseDouble(inputStack.pop());
-                                    secondNumber = Double.parseDouble(display.getText());
-                                    result = firstNumber * secondNumber;
-                                    display.setText("0");
-                                    calcWindow.stackDisplay.setText(String.valueOf(result));
-                                    inputStack.push(String.valueOf(result));
-                                }
-                                break;
-                            case "/":
-                                calcWindow.operatorDisplay.setText(operator);
-                                if (inputStack.size() == 0) {
-                                    inputStack.push(display.getText());
-                                    display.setText("0");
-                                    calcWindow.stackDisplay.setText(inputStack.peek());
-                                }
-                                if (inputStack.size() == 1) {
-                                    firstNumber = Double.parseDouble(inputStack.pop());
-                                    secondNumber = Double.parseDouble(display.getText());
-                                    result = firstNumber / secondNumber;
-                                    display.setText("0");
-                                    calcWindow.stackDisplay.setText(String.valueOf(result));
-                                    inputStack.push(String.valueOf(result));
-                                }
-                                break;
-                            case "=":
-                                calcWindow.operatorDisplay.setText(operator);
-                                if (inputStack.size() == 0) {
-                                    System.out.println();
-                                }
-                                if (inputStack.size() == 1) {
-                                    firstNumber = Double.parseDouble(inputStack.pop());
-                                    secondNumber = Double.parseDouble(display.getText());
-                                    switch (operator){
-                                        case "+":
-                                            result = firstNumber + secondNumber;
-                                            display.setText(String.valueOf(result));
-                                            inputStack.empty();
-                                        case "-":
-                                            result = firstNumber - secondNumber;
-                                            display.setText(String.valueOf(result));
-                                            inputStack.empty();
-                                        case "*":
-                                            result = firstNumber * secondNumber;
-                                            display.setText(String.valueOf(result));
-                                            inputStack.empty();
-                                        case "/":
-                                            result = firstNumber / secondNumber;
-                                            display.setText(String.valueOf(result));
-                                            inputStack.empty();
-                                    }
-                                }
-                            default:
-                                //inputStack.push(calcWindow.getDisplayField().getText());
-                                //inputStack.push(e.getActionCommand());
-
-                        }
-                    }
-                    //display.setText(inputStack.peek());
-                    //System.out.println("inputStack print loc-0: " + inputStack);
-                    //return;
-                }
-                //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-                //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-            }
-        };
     }
-        /**
-         * Liefert den digitListener zurück.
-         * @return ActionListener
-         */
+    /**
+     * return action listener.
+     * @return ActionListener
+     */
+    
+    public ActionListener getAllListener(){
+        return this.allListener;
+    }
 
-        public ActionListener getDigitListener(){
-            return this.digitListener;
+    private double calculate(double firstNumber, double secondNumber, String operator) {
+
+        switch (operator) {
+            case "+":
+                return firstNumber + secondNumber;
+            case "-":
+                return firstNumber - secondNumber;
+            case "*":
+                return firstNumber * secondNumber;
+            case "/":
+                if (secondNumber == 0) {
+                    System.out.println("Cannot divide by zero Error");
+                    return 0; // Or throw an exception
+                }
+                return firstNumber / secondNumber;
+            default:
+                return 0; // Should not happen
         }
-        public ActionListener getOperatorListener(){
-            return this.operatorListener;
-        }
-
-
+    }
 
 }
+

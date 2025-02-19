@@ -1,12 +1,9 @@
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Rectangle;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 public class CalcWindow extends JFrame{
     /**
@@ -15,8 +12,9 @@ public class CalcWindow extends JFrame{
     private static final long serialVersionUID = 7689665368854844115L;
 
     JLabel display;
+    public JLabel msTextDisplay;
+    public JLabel msValueDisplay;
     public JLabel stackDisplay;
-    public JLabel msDisplay;
     public JLabel operatorDisplay;
     public boolean changeSign = false;
 
@@ -34,8 +32,10 @@ public class CalcWindow extends JFrame{
         var calcEngine = new CalcEngine(this);
 
         // Bereitstellen der Zeichensätze
-        Font displayFont = new Font("Ink Free", Font.BOLD,30);
-        Font digitsFont = new Font("Ink Free", Font.BOLD,18);
+        Font displayFont = new Font("Arial", Font.PLAIN, 20);
+        Font digitsFont = new Font("Arial", Font.PLAIN, 10);
+
+        //Font digitsFont = new Font("Ink Free", Font.PLAIN,10);
 
         // Konstanten für die Buttonpositionierung
         final int buttonSize = 50;
@@ -43,12 +43,18 @@ public class CalcWindow extends JFrame{
         final int xStart = 25;
         final int yStart = 115;
 
-        //MS display
-        this.msDisplay = new JLabel("");
-        this.msDisplay.setBounds(xStart,20,100,40);
-        this.msDisplay.setForeground(Color.WHITE);
-        this.msDisplay.setHorizontalAlignment(SwingConstants.LEFT);
-        this.add(this.msDisplay);
+        //MS text display
+        this.msTextDisplay = new JLabel("");
+        this.msTextDisplay.setBounds(xStart,20,30,40);
+        this.msTextDisplay.setForeground(Color.WHITE);
+        this.msTextDisplay.setHorizontalAlignment(SwingConstants.RIGHT);
+        this.add(this.msTextDisplay);
+        //MS value display
+        this.msValueDisplay = new JLabel("");
+        this.msValueDisplay.setBounds(60,20,100,40);
+        this.msValueDisplay.setForeground(Color.WHITE);
+        this.msValueDisplay.setHorizontalAlignment(SwingConstants.LEFT);
+        this.add(this.msValueDisplay);
 
         // Stack Display
         this.stackDisplay = new JLabel("");
@@ -79,9 +85,9 @@ public class CalcWindow extends JFrame{
 
         // Tastenfeld aufbauen
         // Get Listener
-        ActionListener dl = calcEngine.getDigitListener();
-        ActionListener ol = calcEngine.getOperatorListener();
-        //ActionListener all = calcEngine.getAllListener();
+        //ActionListener dl = calcEngine.getDigitListener();
+        //ActionListener ol = calcEngine.getOperatorListener();
+        ActionListener all = calcEngine.getAllListener();
 
 
 
@@ -92,7 +98,7 @@ public class CalcWindow extends JFrame{
                 {"1","2","3","4","*"},
                 {"5","6","7", "8","-"},
                 {"9","0",".","+/-","+"},
-                {"C","Del","=","",""}
+                {"AC","Del","=","",""}
         };
 
         // building Button Layout
@@ -103,10 +109,11 @@ public class CalcWindow extends JFrame{
                 actButton.setActionCommand(taste);
                 actButton.setBounds(x,y,buttonSize,buttonSize);
                 actButton.setFont(digitsFont);
+                //adjustButtonFontSize(actButton);
 
-                //actButton.addActionListener(all);
-
-                if ("0123456789.".contains(taste)) {
+                actButton.addActionListener(all);
+                /* 
+                if ("0123456789.".contains(taste)) { // || taste.matches(".*\\+/-.*")) {
                     actButton.addActionListener(dl);//calcEngine.getDigitListener());
                     //actButton.setBackground(Color.GRAY);
 
@@ -115,9 +122,9 @@ public class CalcWindow extends JFrame{
                     //actButton.setBackground(Color.ORANGE);
 
                 }
+                */
 
-
-                actButton.setOpaque(true);
+                //actButton.setOpaque(true);
                 this.add(actButton);
 
             }
@@ -137,5 +144,4 @@ public class CalcWindow extends JFrame{
     public JLabel getDisplayField() {
         return this.display;
     }
-
 }
