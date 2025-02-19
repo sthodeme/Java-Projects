@@ -7,7 +7,10 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 public class CalcWindow extends JFrame{
     /**
-     *
+     * Sets up the main window of the calculator.
+     * Displays the number buttons, display field and different operator butttons.
+     * various JLabels are used to display the current state of the calculator, which are displyed .....
+     * above the main display field.
      */
     private static final long serialVersionUID = 7689665368854844115L;
 
@@ -20,24 +23,22 @@ public class CalcWindow extends JFrame{
 
     public CalcWindow() {
 
-        // Direkte Individualisierung zu Beginn.
-        this.setTitle("Calcmaster V1");
-        this.setLayout(null);
+        // Main Window Settings
+        this.setTitle("Calculator V1");
+        this.setLayout(null); 
         this.setSize(350,560);
         this.getContentPane().setBackground(Color.BLACK);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);
 
-        // Bereitstellung von CalcEngine.
+        // CalcEngine object initialization
         var calcEngine = new CalcEngine(this);
 
-        // Bereitstellen der Zeichensätze
+        // text font and & sizes
         Font displayFont = new Font("Arial", Font.PLAIN, 20);
         Font digitsFont = new Font("Arial", Font.PLAIN, 10);
 
-        //Font digitsFont = new Font("Ink Free", Font.PLAIN,10);
-
-        // Konstanten für die Buttonpositionierung
+        // values for button layout
         final int buttonSize = 50;
         final int buttonOffset = 60;
         final int xStart = 25;
@@ -70,9 +71,6 @@ public class CalcWindow extends JFrame{
         this.operatorDisplay.setHorizontalAlignment(SwingConstants.LEFT);
         this.add(this.operatorDisplay);
 
-
-
-
         //Input Area
         this.display = new JLabel("0");
         this.display.setBounds(xStart,65,300,40);
@@ -83,13 +81,8 @@ public class CalcWindow extends JFrame{
         this.display.setOpaque(true);
         this.add(this.display);
 
-        // Tastenfeld aufbauen
         // Get Listener
-        //ActionListener dl = calcEngine.getDigitListener();
-        //ActionListener ol = calcEngine.getOperatorListener();
         ActionListener all = calcEngine.getAllListener();
-
-
 
         // ButtonLayout
         String[][] tasten = {
@@ -109,39 +102,26 @@ public class CalcWindow extends JFrame{
                 actButton.setActionCommand(taste);
                 actButton.setBounds(x,y,buttonSize,buttonSize);
                 actButton.setFont(digitsFont);
-                //adjustButtonFontSize(actButton);
-
+        
+                //ActionListener for calcEngine
                 actButton.addActionListener(all);
-                /* 
-                if ("0123456789.".contains(taste)) { // || taste.matches(".*\\+/-.*")) {
-                    actButton.addActionListener(dl);//calcEngine.getDigitListener());
-                    //actButton.setBackground(Color.GRAY);
 
-                } else {
-                    actButton.addActionListener(ol);//calcEngine.getOperatorListener());
-                    //actButton.setBackground(Color.ORANGE);
-
-                }
-                */
-
-                //actButton.setOpaque(true);
+                //Add Button to Window
                 this.add(actButton);
-
             }
 
         }
 
-        // Alles anschalten.
+        // Make all visible
         this.setVisible(true);
     }
 
-
     /**
-     * Liefert Referenz auf das Displayfeld zurück, als einer Schnittstellen für die
-     * Kommunikation zwischen CalcWindow und CalcEngine.
-     * @return JTextField Referenz
+     *  returns Display filed  as communication between CalcWindow und CalcEngine.
+     * @return JTextField reference
      */
     public JLabel getDisplayField() {
         return this.display;
     }
+    
 }
