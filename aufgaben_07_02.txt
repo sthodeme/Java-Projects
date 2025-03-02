@@ -6,7 +6,7 @@ Das Fenster soll zwei JTextfield besitzen um kodierten und unkodierten Text aufz
 Zusätzlich einen JTextField oder JSpinner um den Schlüssel einzugeben.
 Zwei JButton's sollen die Befehle zum Kodieren oder Dekodieren generieren.
 
-Aufgabe 02
+Aufgabe 02/var/folders/tj/q92txb252qd2g1mzlc5b12ym0000gp/T/TemporaryItems/NSIRD_screencaptureui_np3Qk9/Screenshot 2025-02-15 at 16.05.26.png
 ==========
 In einem neuen Projekt erstellt Du ein Hauptfenster Mit einem JLabel welches mit einem einfachen Text
 initialsiert wird.
